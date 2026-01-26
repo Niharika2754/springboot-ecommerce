@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="cadence-be/src/main/java"/>
+	<classpathentry kind="lib" path="cadence-be/target/cadence-0.0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="output" path="cadence-be/target/classes"/>
+</classpath>
