@@ -47,6 +47,11 @@ injectGlobal`
 
   .product-detail-page__header {
     margin-bottom: ${SPACING.XL};
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: ${SPACING.MD};
   }
 
   .product-detail-page__content {

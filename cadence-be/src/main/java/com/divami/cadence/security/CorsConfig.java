@@ -24,7 +24,7 @@ public class CorsConfig {
         // Allow common HTTP methods
         // OPTIONS is required for preflight requests
         config.setAllowedMethods(
-                List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
         );
 
         // Allow headers that frontend usually sends

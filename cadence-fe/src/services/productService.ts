@@ -43,3 +43,13 @@ export const fetchProductById = async (id: number): Promise<Product> => {
   
   return response.data;
 };
+
+export const deleteProduct = async (id: number): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/products/${id}`, {
+    method: 'DELETE',
+  });
+  
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+};

@@ -7,7 +7,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { ROUTES } from '../../constants/index.ts';
 import Button from '../../components/Button/index.tsx';
-import { fetchProductById } from '../../services/productService';
+import { fetchProductById, deleteProduct } from '../../services/productService';
 import './styles.ts';
 
 interface Product {
@@ -30,6 +30,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -69,6 +70,27 @@ const ProductDetail = () => {
     fetchProduct();
   }, [id]);
 
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this product?')) {
+      return;
+    }
+
+    try {
+      setDeleting(true);
+      await deleteProduct(Number(id));
+      navigate(ROUTES.HOME);
+    } catch (err) {
+      console.error('Error deleting product:', err);
+      alert('Failed to delete product');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleEdit = () => {
+    navigate(`/products/${id}/edit`);
+  };
+
   if (loading) {
     return (
       <div className="product-detail-page">
@@ -107,6 +129,14 @@ const ProductDetail = () => {
           <Button variant="secondary" onClick={() => navigate(ROUTES.HOME)}>
             ← Back to Products
           </Button>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <Button variant="primary" onClick={handleEdit}>
+              Edit Product
+            </Button>
+            <Button variant="danger" onClick={handleDelete} disabled={deleting}>
+              {deleting ? 'Deleting...' : 'Delete Product'}
+            </Button>
+          </div>
         </div>
 
         <div className="product-detail-page__content">

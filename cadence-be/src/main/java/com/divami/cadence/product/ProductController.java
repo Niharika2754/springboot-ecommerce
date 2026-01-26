@@ -4,9 +4,11 @@ import java.util.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -74,7 +76,38 @@ public class ProductController {
 		
 	}
 	 
-	 @GetMapping("/products/{id}/image")
+	@PutMapping("/products/{id}")
+	public ResponseEntity<ApiResponse<Product>> updateProduct(
+	        @PathVariable int id,
+	        @RequestBody Product product
+	) {
+	    Product updatedProduct = service.updateProduct(id, product, null);
+	    return ResponseEntity.ok(
+	            ApiResponse.success(HttpStatus.OK, "Product updated successfully", updatedProduct)
+	    );
+	}
+
+	@PutMapping("/products/{id}/with-image")
+	public ResponseEntity<ApiResponse<Product>> updateProductWithImage(
+	        @PathVariable int id,
+	        @RequestPart Product product,
+	        @RequestPart MultipartFile image
+	) {
+	    Product updatedProduct = service.updateProduct(id, product, image);
+	    return ResponseEntity.ok(
+	            ApiResponse.success(HttpStatus.OK, "Product updated successfully", updatedProduct)
+	    );
+	}
+
+	@DeleteMapping("/products/{id}")
+	public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable int id) {
+	    service.deleteProduct(id);
+	    return ResponseEntity.ok(
+	            ApiResponse.success(HttpStatus.OK, "Product deleted successfully", null)
+	    );
+	}
+	 
+	@GetMapping("/products/{id}/image")
 	public ResponseEntity<byte[]> getProductImage(@PathVariable int id) {
 	    Product product = service.getProductById(id);
 	    

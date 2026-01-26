@@ -103,3 +103,19 @@ export const registerUser = async (data: RegisterData): Promise<User> => {
   
   return response.data;
 };
+
+/**
+ * Deletes a product by ID
+ */
+export const deleteProduct = async (id: number): Promise<void> => {
+  const response = await fetchWithErrorHandling<ApiResponse<null>>(
+    `${API_BASE_URL}${API_ENDPOINTS.PRODUCTS}/${id}`,
+    {
+      method: 'DELETE',
+    }
+  );
+  
+  if (!response.success) {
+    throw new Error(response.message || 'Failed to delete product');
+  }
+};

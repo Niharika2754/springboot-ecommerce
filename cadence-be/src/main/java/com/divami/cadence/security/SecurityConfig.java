@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
@@ -31,7 +32,12 @@ public class SecurityConfig {
 
             // Authorization rules
             .authorizeRequests()
-            .antMatchers("/api/auth/**", "/api/products/**", "/api/product/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/products/**", "/api/product/**").permitAll()
+            .antMatchers(HttpMethod.POST, "/api/products/**", "/api/product/**").permitAll()
+            .antMatchers(HttpMethod.PUT, "/api/products/**", "/api/product/**").permitAll()
+            .antMatchers(HttpMethod.DELETE, "/api/products/**", "/api/product/**").permitAll()
+            .antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
+            .antMatchers("/api/auth/**").permitAll()
             .anyRequest().permitAll();
 
         return http.build();

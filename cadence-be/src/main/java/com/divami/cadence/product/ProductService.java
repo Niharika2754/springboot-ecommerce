@@ -50,6 +50,37 @@ public class ProductService {
                 );
     }
   
+	public Product updateProduct(int id, Product updatedProduct, MultipartFile image) {
+	    try {
+	        Product existingProduct = getProductById(id);
+	        
+	        // Update basic fields
+	        existingProduct.setName(updatedProduct.getName());
+	        existingProduct.setDesc(updatedProduct.getDesc());
+	        existingProduct.setBrand(updatedProduct.getBrand());
+	        existingProduct.setPrice(updatedProduct.getPrice());
+	        existingProduct.setCategory(updatedProduct.getCategory());
+	        existingProduct.setReleaseDate(updatedProduct.getReleaseDate());
+	        existingProduct.setAvailable(updatedProduct.isAvailable());
+	        existingProduct.setQuality(updatedProduct.getQuality());
+	        
+	        // Update image if provided
+	        if (image != null && !image.isEmpty()) {
+	            existingProduct.setImageName(image.getOriginalFilename());
+	            existingProduct.setImageType(image.getContentType());
+	            existingProduct.setImageData(image.getBytes());
+	        }
+	        
+	        return repo.save(existingProduct);
+	        
+	    } catch (IOException e) {
+	        throw new RuntimeException("Failed to update product image", e);
+	    }
+	}
 	
+	public void deleteProduct(int id) {
+	    Product product = getProductById(id);
+	    repo.delete(product);
+	}
 
 }

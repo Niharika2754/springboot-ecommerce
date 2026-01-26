@@ -11,6 +11,7 @@ import Register from './pages/Register/index.tsx';
 import Home from './pages/Home/index.tsx';
 import ProductDetail from './pages/ProductDetail/index.tsx';
 import AddProduct from './pages/AddProduct/index.tsx';
+import EditProduct from './pages/EditProduct/index.tsx';
 import { ROUTES } from './constants/index.ts';
 
 /**
@@ -36,6 +37,11 @@ const App = () => {
           <Route path={ROUTES.ADD_PRODUCT} element={
             <ProtectedRoute>
               <AddProduct />
+            </ProtectedRoute>
+          } />
+          <Route path="/products/:id/edit" element={
+            <ProtectedRoute>
+              <EditProduct />
             </ProtectedRoute>
           } />
           {/* Public routes */}
