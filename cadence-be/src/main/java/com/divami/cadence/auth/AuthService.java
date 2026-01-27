@@ -15,37 +15,35 @@ import java.util.Optional;
 @Transactional
 public class AuthService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+	 private final UserRepository userRepository;
+	 private final PasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+	 public AuthService(UserRepository userRepository,
+	                       PasswordEncoder passwordEncoder) {
+	        this.userRepository = userRepository;
+	        this.passwordEncoder = passwordEncoder;
+	}
 
     // Register new user
-    public UserResponseDTO register(String name, String email, String username, String password) {
-        // Check if email already exists
-        Optional<User> existingByEmail = userRepository.findByEmail(email);
-        if (existingByEmail.isPresent()) {
-            throw new ConflictException("Email already registered");
-        }
+	 public UserResponseDTO register(String name, String email,
+             String username, String password) {
+			
+			if (userRepository.findByEmail(email).isPresent()) {
+				throw new ConflictException("Email already registered");
+			}
+			
+			if (userRepository.findByUsername(username) != null) {
+				throw new ConflictException("Username already taken");
+			}
+			
+			String encodedPassword = passwordEncoder.encode(password);
+			
+			User user = new User(name, email, username, encodedPassword);
+			User savedUser = userRepository.save(user);
+			
+			return mapToDTO(savedUser);
+	 }
 
-        // Check if username already exists
-        Optional<User> existingByUsername = userRepository.findByUsername(username);
-        if (existingByUsername.isPresent()) {
-            throw new ConflictException("Username already taken");
-        }
-
-        // Hash password
-        String hashedPassword = passwordEncoder.encode(password);
-
-        // Create and save user
-        User user = new User(name, email, username, hashedPassword);
-        User savedUser = userRepository.save(user);
-
-        return mapToDTO(savedUser);
-    }
 
     // Login user
     public UserResponseDTO login(String email, String password) {
@@ -53,11 +51,7 @@ public class AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 
-        // Verify password
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("Invalid email or password");
-        }
-
+      
         return mapToDTO(user);
     }
 

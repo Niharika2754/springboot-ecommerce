@@ -13,17 +13,19 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder; // Added for password hashing
 
-    public UserService(UserRepository userRepository,
-            PasswordEncoder passwordEncoder) {
+    // Updated constructor to inject PasswordEncoder
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
 			this.userRepository = userRepository;
 			this.passwordEncoder = passwordEncoder;
 	}
 
 
-    // Create and save new user
+    // Create and save new user (for internal/admin use only)
+    // IMPORTANT: Public users should register via /api/auth/register endpoint
     public UserResponseDTO createUser(String name, String email, String username, String password) {
+        // Hash password before storing - NEVER store plain text passwords!
         String hashedPassword = passwordEncoder.encode(password);
         
         User user = new User(

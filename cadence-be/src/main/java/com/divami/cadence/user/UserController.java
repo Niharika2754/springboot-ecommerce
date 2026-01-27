@@ -28,26 +28,27 @@ public class UserController {
         );
     }
 
+    // REMOVED: POST /api/users endpoint
+    // Users should register via POST /api/auth/register instead
+    // This ensures proper password hashing and validation
     
-    @PostMapping
-    public ResponseEntity<ApiResponse<UserResponseDTO>> createUser(
-            @RequestBody User user) {
-
-        UserResponseDTO created = userService.createUser(
-                user.getName(),
-                user.getEmail(),
-                user.getUsername(),
-                user.getPassword()
-        );
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(
-                        HttpStatus.CREATED,
-                        "User created successfully",
-                        created
-                ));
-    }
+    // @PostMapping
+    // public ResponseEntity<ApiResponse<UserResponseDTO>> createUser(
+    //         @RequestBody User user) {
+    //     UserResponseDTO created = userService.createUser(
+    //             user.getName(),
+    //             user.getEmail(),
+    //             user.getUsername(),
+    //             user.getPassword()
+    //     );
+    //     return ResponseEntity
+    //             .status(HttpStatus.CREATED)
+    //             .body(ApiResponse.success(
+    //                     HttpStatus.CREATED,
+    //                     "User created successfully",
+    //                     created
+    //             ));
+    // }
 
 
     // Get user by id
