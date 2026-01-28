@@ -1,10 +1,17 @@
 package com.divami.cadence.auth;
 
+import com.divami.cadence.auth.dto.AuthResponseDTO;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+
 import com.divami.cadence.common.exception.ConflictException;
+import com.divami.cadence.security.JWTService;
 import com.divami.cadence.user.User;
 import com.divami.cadence.user.UserRepository;
 import com.divami.cadence.user.dto.UserResponseDTO;
@@ -17,11 +24,18 @@ public class AuthService {
 
 	 private final UserRepository userRepository;
 	 private final PasswordEncoder passwordEncoder;
+	 private final AuthenticationManager authMnager;
+	 private final JWTService jwtService;
 
 	 public AuthService(UserRepository userRepository,
-	                       PasswordEncoder passwordEncoder) {
+	                       PasswordEncoder passwordEncoder,
+	                       AuthenticationManager authMnager,
+	                       JWTService jwtService
+	                       ) {
 	        this.userRepository = userRepository;
 	        this.passwordEncoder = passwordEncoder;
+	        this.authMnager = authMnager;
+	        this.jwtService=jwtService;
 	}
 
     // Register new user
@@ -45,15 +59,33 @@ public class AuthService {
 	 }
 
 
-    // Login user
-    public UserResponseDTO login(String email, String password) {
-        // Find user by email
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 
-      
-        return mapToDTO(user);
-    }
+	 public AuthResponseDTO login(String username, String password) {
+
+	     try {
+	         Authentication authentication =
+	                 authMnager.authenticate(
+	                         new UsernamePasswordAuthenticationToken(
+	                                 username,
+	                                 password
+	                         )
+	                 );
+
+	         // Authentication successful
+	         User user = userRepository.findByUsername(username);
+
+	         String token = jwtService.generateToken(username);
+
+	         return new AuthResponseDTO(
+	                 token,
+	                 mapToDTO(user)
+	         );
+
+	     } catch (AuthenticationException ex) {
+	         throw new IllegalArgumentException("Invalid username or password");
+	     }
+	 }
+
 
     // Map entity to DTO
     private UserResponseDTO mapToDTO(User user) {

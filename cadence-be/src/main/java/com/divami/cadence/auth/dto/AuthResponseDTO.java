@@ -1,0 +1,22 @@
+package com.divami.cadence.auth.dto;
+
+import com.divami.cadence.user.dto.UserResponseDTO;
+
+public class AuthResponseDTO {
+
+    private String token;
+    private UserResponseDTO user;
+
+    public AuthResponseDTO(String token, UserResponseDTO user) {
+        this.token = token;
+        this.user = user;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public UserResponseDTO getUser() {
+        return user;
+    }
+}

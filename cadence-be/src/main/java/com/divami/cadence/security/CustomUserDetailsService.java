@@ -3,7 +3,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import com.divami.cadence.security.CustomUserDetails;
 import com.divami.cadence.user.User;
 import com.divami.cadence.user.UserRepository;
 

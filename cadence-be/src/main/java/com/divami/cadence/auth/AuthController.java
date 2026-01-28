@@ -1,18 +1,19 @@
 package com.divami.cadence.auth;
 
 import com.divami.cadence.common.response.ApiResponse;
+import com.divami.cadence.auth.dto.AuthResponseDTO;
 import com.divami.cadence.auth.dto.LoginRequestDTO;
 import com.divami.cadence.auth.dto.RegisterRequestDTO;
 import com.divami.cadence.user.dto.UserResponseDTO;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 
-
-import javax.servlet.http.HttpServletRequest;
-import org.springframework.security.web.csrf.CsrfToken;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -45,13 +46,12 @@ public class AuthController {
                 ));
     }
 
-    // Login endpoint
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> login(
+    public ResponseEntity<ApiResponse<AuthResponseDTO>> login(
             @RequestBody LoginRequestDTO request) {
 
-        UserResponseDTO user = authService.login(
-                request.getEmail(),
+        AuthResponseDTO user = authService.login(
+                request.getUsername(),
                 request.getPassword()
         );
 
@@ -63,7 +63,6 @@ public class AuthController {
                 )
         );
     }
-    
     
     @GetMapping("/csrf-token")
     public CsrfToken getCsrfToken(HttpServletRequest request) {
