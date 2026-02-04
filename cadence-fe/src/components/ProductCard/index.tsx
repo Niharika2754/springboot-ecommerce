@@ -5,12 +5,13 @@
 import type { ProductCardProps } from './types.ts';
 import { formatPrice } from '../../utils/index.ts';
 import { truncateText } from './helpers.ts';
+import { API_BASE_URL } from '../../constants/index.ts';
 import './styles.ts';
 import { useState } from 'react';
 
 const ProductCard = ({ product, onClick }: ProductCardProps) => {
   const [imageError, setImageError] = useState(false);
-  const imageUrl = `/api/products/${product.id}/image`;
+  const imageUrl = `${API_BASE_URL}/api/products/${product.id}/image`;
 
   const handleImageError = () => {
     console.log(`Failed to load image for product ${product.id}`);

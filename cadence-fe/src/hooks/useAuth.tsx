@@ -6,7 +6,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import type { User, AuthContextType, LoginCredentials, RegisterData } from '../types/index.ts';
 import { loginUser, registerUser } from '../services/api.ts';
-import { getUserFromStorage, saveUserToStorage, removeUserFromStorage } from '../utils/index.ts';
+import { getUserFromStorage, saveUserToStorage, removeUserFromStorage, saveTokenToStorage } from '../utils/index.ts';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -36,10 +36,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (credentials: LoginCredentials): Promise<void> => {
     try {
       setIsLoading(true);
-      const userData = await loginUser(credentials);
+      const { token, user: userData } = await loginUser(credentials);
+      saveTokenToStorage(token);
+      saveUserToStorage(userData);
       setUser(userData);
       setIsAuthenticated(true);
-      saveUserToStorage(userData);
     } catch (error) {
       setUser(null);
       setIsAuthenticated(false);
@@ -55,10 +56,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = async (data: RegisterData): Promise<void> => {
     try {
       setIsLoading(true);
-      const userData = await registerUser(data);
+      const { token, user: userData } = await registerUser(data);
+      saveTokenToStorage(token);
+      saveUserToStorage(userData);
       setUser(userData);
       setIsAuthenticated(true);
-      saveUserToStorage(userData);
     } catch (error) {
       setUser(null);
       setIsAuthenticated(false);

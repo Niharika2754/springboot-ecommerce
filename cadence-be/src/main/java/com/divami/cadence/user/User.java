@@ -1,6 +1,8 @@
 package com.divami.cadence.user;
 
 import javax.persistence.*;
+import com.divami.cadence.user.enums.Role;
+
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
@@ -25,12 +27,14 @@ public class User {
 
     protected User() {} // Required by JPA
 
-    public User(String name, String email, String username, String password) {
+    public User(String name, String email, String username, String password, Role role) {
         this.name = name;
         this.email = email;
         this.username = username;
         this.password = password;
+        this.role = role;
     }
+
 
     @Id
     @GeneratedValue
@@ -49,8 +53,12 @@ public class User {
 
     @Column(name = "password", nullable = false)
     private String password;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
-    @CreationTimestamp
+	@CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt; // Auto set on insert
 
@@ -86,6 +94,14 @@ public class User {
     public void restore() {
         this.deletedAt = null; // Restore soft-deleted user
     }
+
+    public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
 
     // -------- getters --------
 

@@ -5,8 +5,9 @@
 
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { ROUTES } from '../../constants/index.ts';
+import { ROUTES, API_BASE_URL } from '../../constants/index.ts';
 import Button from '../../components/Button/index.tsx';
+import { useAuth } from '../../hooks/useAuth.tsx';
 import { fetchProductById, deleteProduct } from '../../services/productService';
 import './styles.ts';
 
@@ -26,6 +27,8 @@ interface Product {
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'ADMIN';
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -120,7 +123,7 @@ const ProductDetail = () => {
     );
   }
 
-  const imageUrl = `/api/products/${id}/image`;
+  const imageUrl = `${API_BASE_URL}/api/products/${id}/image`;
 
   return (
     <div className="product-detail-page">
@@ -129,14 +132,16 @@ const ProductDetail = () => {
           <Button variant="secondary" onClick={() => navigate(ROUTES.HOME)}>
             ← Back to Products
           </Button>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <Button variant="primary" onClick={handleEdit}>
-              Edit Product
-            </Button>
-            <Button variant="danger" onClick={handleDelete} disabled={deleting}>
-              {deleting ? 'Deleting...' : 'Delete Product'}
-            </Button>
-          </div>
+          {isAdmin && (
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <Button variant="primary" onClick={handleEdit}>
+                Edit Product
+              </Button>
+              <Button variant="danger" onClick={handleDelete} disabled={deleting}>
+                {deleting ? 'Deleting...' : 'Delete Product'}
+              </Button>
+            </div>
+          )}
         </div>
 
         <div className="product-detail-page__content">

@@ -20,9 +20,3 @@ export const STORAGE_KEYS = {
 
 export const ITEMS_PER_PAGE = 12;
 export const MAX_CART_ITEMS = 99;
-
-export const ROUTES = {
-  HOME: '/',
-  PRODUCT_DETAIL: '/products/:id',
-  ADD_PRODUCT: '/add-product',
-};

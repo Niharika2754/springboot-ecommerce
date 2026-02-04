@@ -15,12 +15,21 @@ export interface ApiResponse<T> {
 /**
  * User related types
  */
+export type UserRole = 'USER' | 'ADMIN';
+
 export interface User {
   id: string;
   email: string;
   name: string;
   username?: string;
+  role?: UserRole;
   createdAt: string;
+}
+
+/** Backend login/register response: { token, user } */
+export interface AuthResponse {
+  token: string;
+  user: User;
 }
 
 export interface LoginCredentials {

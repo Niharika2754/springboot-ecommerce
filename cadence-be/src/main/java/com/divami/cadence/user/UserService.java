@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.divami.cadence.user.dto.UserResponseDTO;
+import com.divami.cadence.user.enums.Role;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +33,8 @@ public class UserService {
                 name,
                 email,
                 username,
-                hashedPassword // Store hashed password only
+                hashedPassword,
+                Role.USER
         );
         User savedUser = userRepository.save(user); // Persist entity
 
@@ -46,6 +48,7 @@ public class UserService {
                 user.getName(),
                 user.getEmail(),
                 user.getUsername(),
+                user.getRole(),
                 user.getCreatedAt()
         );
     }

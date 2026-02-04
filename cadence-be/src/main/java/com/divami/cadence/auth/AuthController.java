@@ -4,7 +4,6 @@ import com.divami.cadence.common.response.ApiResponse;
 import com.divami.cadence.auth.dto.AuthResponseDTO;
 import com.divami.cadence.auth.dto.LoginRequestDTO;
 import com.divami.cadence.auth.dto.RegisterRequestDTO;
-import com.divami.cadence.user.dto.UserResponseDTO;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,12 +24,12 @@ public class AuthController {
         this.authService = authService;
     }
 
-    // Register endpoint
+    // Register endpoint - returns token + user (same shape as login)
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> register(
+    public ResponseEntity<ApiResponse<AuthResponseDTO>> register(
             @RequestBody RegisterRequestDTO request) {
 
-        UserResponseDTO user = authService.register(
+        AuthResponseDTO authResponse = authService.register(
                 request.getName(),
                 request.getEmail(),
                 request.getUsername(),
@@ -42,7 +41,7 @@ public class AuthController {
                 .body(ApiResponse.success(
                         HttpStatus.CREATED,
                         "User registered successfully",
-                        user
+                        authResponse
                 ));
     }
 

@@ -3,10 +3,12 @@
  * Form for adding new products
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button/index.tsx';
-import { ROUTES } from '../../constants/index.ts';
+import { ROUTES, API_BASE_URL } from '../../constants/index.ts';
+import { useAuth } from '../../hooks/useAuth.tsx';
+import { getTokenFromStorage } from '../../utils/index.ts';
 import './styles.ts';
 
 interface ProductFormData {
@@ -23,6 +25,7 @@ interface ProductFormData {
 
 const AddProduct = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     brand: '',
@@ -36,6 +39,12 @@ const AddProduct = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user && user.role !== 'ADMIN') {
+      navigate(ROUTES.HOME, { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -79,8 +88,10 @@ const AddProduct = () => {
         }));
         formDataToSend.append('image', formData.image);
         
-        const response = await fetch('/api/product/with-image', {
+        const token = getTokenFromStorage();
+        const response = await fetch(`${API_BASE_URL}/api/product/with-image`, {
           method: 'POST',
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
           body: formDataToSend,
         });
 
@@ -100,10 +111,12 @@ const AddProduct = () => {
           quality: 95
         };
         
-        const response = await fetch('/api/product', {
+        const token = getTokenFromStorage();
+        const response = await fetch(`${API_BASE_URL}/api/product`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify(productData),
         });

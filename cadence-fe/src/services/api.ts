@@ -4,22 +4,28 @@
  */
 
 import { API_BASE_URL, API_ENDPOINTS } from '../constants/index.ts';
-import type { Product, User, LoginCredentials, RegisterData, ApiResponse } from '../types/index.ts';
+import type { Product, User, LoginCredentials, RegisterData, ApiResponse, AuthResponse } from '../types/index.ts';
+import { getTokenFromStorage } from '../utils/index.ts';
 
 /**
- * Generic fetch wrapper with error handling
+ * Generic fetch wrapper with error handling; attaches JWT when present
  */
 const fetchWithErrorHandling = async <T>(
   url: string,
   options?: RequestInit
 ): Promise<T> => {
+  const token = getTokenFromStorage();
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+    ...(options?.headers as Record<string, string>),
+  };
+  if (token) {
+    (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+  }
   try {
     const response = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options?.headers,
-      },
       ...options,
+      headers,
     });
 
     if (!response.ok) {
@@ -64,14 +70,14 @@ export const fetchProductById = async (id: number): Promise<Product> => {
 };
 
 /**
- * User login - calls backend API
+ * User login - backend returns { token, user }
  */
-export const loginUser = async (credentials: LoginCredentials): Promise<User> => {
-  const response = await fetchWithErrorHandling<ApiResponse<User>>(
+export const loginUser = async (credentials: LoginCredentials): Promise<{ token: string; user: User }> => {
+  const response = await fetchWithErrorHandling<ApiResponse<AuthResponse>>(
     `${API_BASE_URL}${API_ENDPOINTS.LOGIN}`,
     {
       method: 'POST',
-      body: JSON.stringify(credentials),
+      body: JSON.stringify({ username: credentials.email, password: credentials.password }),
     }
   );
   
@@ -83,13 +89,12 @@ export const loginUser = async (credentials: LoginCredentials): Promise<User> =>
 };
 
 /**
- * User registration - calls backend API
+ * User registration - backend returns { token, user } (same shape as login for consistency)
  */
-export const registerUser = async (data: RegisterData): Promise<User> => {
-  // Remove confirmPassword before sending to backend
+export const registerUser = async (data: RegisterData): Promise<{ token: string; user: User }> => {
   const { confirmPassword, ...registrationData } = data;
   
-  const response = await fetchWithErrorHandling<ApiResponse<User>>(
+  const response = await fetchWithErrorHandling<ApiResponse<AuthResponse>>(
     `${API_BASE_URL}${API_ENDPOINTS.REGISTER}`,
     {
       method: 'POST',

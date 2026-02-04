@@ -6,8 +6,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Button from '../../components/Button/index.tsx';
-import { ROUTES } from '../../constants/index.ts';
+import { ROUTES, API_BASE_URL } from '../../constants/index.ts';
+import { useAuth } from '../../hooks/useAuth.tsx';
 import { fetchProductById } from '../../services/productService';
+import { getTokenFromStorage } from '../../utils/index.ts';
 import './styles.ts';
 
 interface ProductFormData {
@@ -25,6 +27,7 @@ interface ProductFormData {
 const EditProduct = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     brand: '',
@@ -39,6 +42,12 @@ const EditProduct = () => {
   const [loading, setLoading] = useState(false);
   const [loadingProduct, setLoadingProduct] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user && user.role !== 'ADMIN') {
+      navigate(ROUTES.HOME, { replace: true });
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -113,8 +122,10 @@ const EditProduct = () => {
         }));
         formDataToSend.append('image', formData.image);
         
-        const response = await fetch(`/api/products/${id}/with-image`, {
+        const token = getTokenFromStorage();
+        const response = await fetch(`${API_BASE_URL}/api/products/${id}/with-image`, {
           method: 'PUT',
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
           body: formDataToSend,
         });
 
@@ -125,10 +136,12 @@ const EditProduct = () => {
         }
       } else {
         // Update without changing image
-        const response = await fetch(`/api/products/${id}`, {
+        const token = getTokenFromStorage();
+        const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify(productData),
         });

@@ -24,7 +24,7 @@ public class LoginRequestDTO {
     }
 
     // Setters
-    public void setEmail(String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 

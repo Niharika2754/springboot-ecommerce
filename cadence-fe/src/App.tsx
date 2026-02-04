@@ -45,8 +45,8 @@ const App = () => {
             </ProtectedRoute>
           } />
           {/* Public routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path={ROUTES.LOGIN} element={<Login />} />
+          <Route path={ROUTES.REGISTER} element={<Register />} />
           {/* Catch all - redirect to home */}
           <Route path="*" element={
             <ProtectedRoute>

@@ -15,6 +15,7 @@ import com.divami.cadence.security.JWTService;
 import com.divami.cadence.user.User;
 import com.divami.cadence.user.UserRepository;
 import com.divami.cadence.user.dto.UserResponseDTO;
+import com.divami.cadence.user.enums.Role;
 
 import java.util.Optional;
 
@@ -38,24 +39,20 @@ public class AuthService {
 	        this.jwtService=jwtService;
 	}
 
-    // Register new user
-	 public UserResponseDTO register(String name, String email,
+    // Register new user; returns token + user so frontend can stay logged in
+	 public AuthResponseDTO register(String name, String email,
              String username, String password) {
-			
 			if (userRepository.findByEmail(email).isPresent()) {
 				throw new ConflictException("Email already registered");
 			}
-			
-			if (userRepository.findByUsername(username) != null) {
+			if (userRepository.findByUsername(username).isPresent()) {
 				throw new ConflictException("Username already taken");
 			}
-			
 			String encodedPassword = passwordEncoder.encode(password);
-			
-			User user = new User(name, email, username, encodedPassword);
+			User user = new User(name, email, username, encodedPassword, Role.USER);
 			User savedUser = userRepository.save(user);
-			
-			return mapToDTO(savedUser);
+			String token = jwtService.generateToken(savedUser.getUsername());
+			return new AuthResponseDTO(token, mapToDTO(savedUser));
 	 }
 
 
@@ -72,7 +69,10 @@ public class AuthService {
 	                 );
 
 	         // Authentication successful
-	         User user = userRepository.findByUsername(username);
+	         // Find user by username or email (same logic as CustomUserDetailsService)
+	         User user = userRepository.findByUsername(username)
+	                 .orElseGet(() -> userRepository.findByEmail(username)
+	                         .orElseThrow(() -> new IllegalArgumentException("User not found")));
 
 	         String token = jwtService.generateToken(username);
 
@@ -94,6 +94,7 @@ public class AuthService {
                 user.getName(),
                 user.getEmail(),
                 user.getUsername(),
+                user.getRole(),
                 user.getCreatedAt()
         );
     }
