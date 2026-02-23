@@ -8,12 +8,12 @@ loadUserByUsername(String username)
 package com.divami.cadence.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 import com.divami.cadence.user.User;
 import com.divami.cadence.user.UserRepository;
-
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {

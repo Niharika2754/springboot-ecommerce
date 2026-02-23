@@ -1,23 +1,20 @@
 package com.divami.cadence.auth;
 
-import com.divami.cadence.auth.dto.AuthResponseDTO;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-
+import com.divami.cadence.auth.dto.AuthResponseDTO;
 import com.divami.cadence.common.exception.ConflictException;
 import com.divami.cadence.security.JWTService;
 import com.divami.cadence.user.User;
 import com.divami.cadence.user.UserRepository;
 import com.divami.cadence.user.dto.UserResponseDTO;
 import com.divami.cadence.user.enums.Role;
-
-import java.util.Optional;
 
 @Service
 @Transactional

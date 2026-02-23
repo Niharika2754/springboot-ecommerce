@@ -1,7 +1,7 @@
 package com.divami.cadence.security;
 
 import java.io.IOException;
-import org.springframework.context.annotation.Bean;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -89,6 +89,11 @@ public class JwtFilter extends OncePerRequestFilter {
                                      .setAuthentication(authToken);
             }
         }
+
+
+        System.out.print("-------------");
+         System.out.print(token);
+     System.out.print(username);
 
         // Continue the filter chain
         filterChain.doFilter(request, response);
